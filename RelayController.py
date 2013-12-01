@@ -18,20 +18,16 @@ class RelayController:
   # FIXME this should be a metaprogrammed setup - many sensor instances for a single slice of pi
   def set(self,newState):
     
-    # FIXME need to catch error
-    print "Switching relay " + relayA + " to " + ` int(stateArg)`
+    newState = int(newState)
 
-    if int(stateArg) == 1:
-    	relayValue = 1
-    else:
-    	relayValue = 0 
+    # FIXME need to catch error
+    print "Switching relay " + `self.relayA` + " to " + `newState`
+
+    wiringpi.pinMode(self.relayA,self.OUTPUT_MODE)
     
-    OUTPUT = 1
-    wiringpi.pinMode(relayA,self.OUTPUT_MODE)
-    
-    initialState = wiringpi.digitalRead(relayA)
-    wiringpi.digitalWrite(relayA,newState)
-    currentState = wiringpi.digitalRead(relayA)
+    initialState = wiringpi.digitalRead(self.relayA)
+    wiringpi.digitalWrite(self.relayA, newState)
+    currentState = wiringpi.digitalRead(self.relayA)
     
     result = None
     if(initialState == currentState):

@@ -6,6 +6,7 @@ import datetime
 
 from TempSensor import TempSensor
 from RelaySensor import RelaySensor
+from RelayController import RelayController
 #from MockTempSensor import MockTempSensor
 
 # FIXME add to environment config rather than hard-coding only
@@ -16,6 +17,10 @@ ERRORMESSAGE_KEY = "errormessage"
 sensors = [
     TempSensor(),
     RelaySensor(),
+]
+
+controllers = [
+    RelayController(),
 ]
 
 def read_sensor(request):
@@ -45,12 +50,33 @@ def read_sensor(request):
         "result": result,
         "errors": errors,
     }
-    #return Response('Result for %(sensor)s is %(result)s' % {"sensor": sensor, "result": result})
     
     
 
 def issue_command(request):
-    return Response('Switching %(output)s to %(state)s' % request.matchdict)
+    controller = request.matchdict['output']
+    newState = request.matchdict['state']
+
+    # default empty result
+    result = None
+    errors = []
+
+    try:
+      controller = int(controller)
+      result = controllers[controller].set(newState)
+    except ValueError:
+      errors.append({
+          ERRORSTATE_KEY   : 2,
+          ERRORMESSAGE_KEY : "The specified controller ID was not formatted correctly. Use a 0-indexed integer and try again."
+      })
+    except IndexError:
+      errors.append({
+        ERRORSTATE_KEY    : 1,
+        ERRORMESSAGE_KEY  : "The specified controller does not exist"
+      })
+
+    # FIXME ERROR HANDLING
+    return result
 
 if __name__ == '__main__':
     config = Configurator()
@@ -61,7 +87,7 @@ if __name__ == '__main__':
     
     # Control output 
     config.add_route('issue_command','/switch/{output}/{state}')
-    config.add_view(issue_command, route_name='issue_command')
+    config.add_view(issue_command, route_name='issue_command', renderer='json')
      
     app = config.make_wsgi_app()
     server = make_server('0.0.0.0', PORT, app)
