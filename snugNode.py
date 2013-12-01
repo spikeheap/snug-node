@@ -4,10 +4,11 @@ from pyramid.response import Response
 
 import datetime
 
-from TempSensor import TempSensor
-from RelaySensor import RelaySensor
-from RelayController import RelayController
-#from MockTempSensor import MockTempSensor
+#from TempSensor import TempSensor
+#from RelaySensor import RelaySensor
+#from RelayController import RelayController
+
+from MockTempSensor import MockTempSensor
 
 # FIXME add to environment config rather than hard-coding only
 PORT = 51251
@@ -15,13 +16,36 @@ ERRORSTATE_KEY = "errorstate"
 ERRORMESSAGE_KEY = "errormessage"
 
 sensors = [
-    TempSensor(),
-    RelaySensor(),
+  MockTempSensor(),
+#    TempSensor(),
+#    RelaySensor(),
 ]
 
 controllers = [
-    RelayController(),
+#    RelayController(),
 ]
+
+def index(request):
+  responseHTML = "<h1>Welcome to the snug</h1>\n"
+  
+  responseHTML += "<h2>Sensors</h2>\n"
+  responseHTML += "<ul>"
+  for index in range(len(sensors)):
+    responseHTML += "<li><a href=\"/read/%(index)s\">Sensor %(index)s</a></li>" % locals()
+  responseHTML += "</ul>"
+  
+  responseHTML += "<h2>Controllers</h2>\n" 
+  responseHTML += "<ul>"
+  for index in range(len(controllers)):
+    controllerName = controller.name
+    responseHTML += "<li>Controller %(controllerName): "
+    responseHTML += "<a href=\"/switch/%(index)s/0\">OFF</a>" % locals()
+    responseHTML += "&nbsp;|&nbsp;"
+    responseHTML += "<a href=\"/switch/%(index)s/1\">ON</a>" % locals()
+    responseHTML += "</li>"
+  responseHTML += "</ul>"
+  
+  return Response(responseHTML)
 
 def read_sensor(request):
     sensor = request.matchdict['sensor']
@@ -84,6 +108,10 @@ if __name__ == '__main__':
     # Read sensor 
     config.add_route('read_sensor','/read/{sensor}')
     config.add_view(read_sensor, route_name='read_sensor', renderer='json')
+    
+    # Read sensor 
+    config.add_route('index','/')
+    config.add_view(index, route_name='index')
     
     # Control output 
     config.add_route('issue_command','/switch/{output}/{state}')
