@@ -4,8 +4,9 @@ from pyramid.response import Response
 
 import datetime
 
-#from TempSensor import TempSensor
-from MockTempSensor import MockTempSensor
+from TempSensor import TempSensor
+from RelaySensor import RelaySensor
+#from MockTempSensor import MockTempSensor
 
 # FIXME add to environment config rather than hard-coding only
 PORT = 51251

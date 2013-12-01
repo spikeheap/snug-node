@@ -10,17 +10,21 @@ class RelaySensor:
   OUTPUT_MODE = 1 
   relayA = 24
   relayB = 25
-  
-  def read(self, relayId):
+
+  # FIXME this should be a metaprogrammed setup - many sensor instances for a single slice of pi
+  def read(self):
+    wiringpi.pinMode(self.relayA, self.OUTPUT_MODE)
+    return wiringpi.digitalRead(self.relayA)
+
+  def readSensor(self, relayId):
+    selectedId = None
     if relayId == 'A' or relayId == 'a' or relayId == 0:
     	selectedRelay = relayA
     elif relayId == 'B' or relayId == 'b' or relayId == 1:
     	selectedRelay = relayB
     else:
       # FIXME needs to be less generic
-      raise Exception("relayId argument was not valid for this sensor type. Must be one of 'A,a,0' or 'B,b,1'.)
-      
-
-  wiringpi.pinMode(selectedRelay,OUTPUT_MODE)
-  
-  return wiringpi.digitalRead(selectedRelay)
+      raise Exception("relayId argument was not valid for this sensor type. Must be one of 'A,a,0' or 'B,b,1'.")
+    
+    wiringpi.pinMode(selectedRelay, self.OUTPUT_MODE)
+    return wiringpi.digitalRead(selectedRelay)
