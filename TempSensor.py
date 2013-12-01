@@ -1,6 +1,7 @@
 import smbus
 import time
 
+# FIXME sensor classes should return a JSON object containing additional information, such as the sensor ID, timestamp.
 class TempSensor:
   """ Temperature sensor reporting class for the TI TMP100NA Temperature Sensor on address 0x48 (e.g as included in http://shop.ciseco.co.uk/i-o-pod-rtc-eeprom-temp/)"""
   
