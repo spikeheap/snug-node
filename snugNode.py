@@ -4,9 +4,9 @@ from pyramid.response import Response
 
 import datetime
 
-#from TempSensor import TempSensor
-#from RelaySensor import RelaySensor
-#from RelayController import RelayController
+from TempSensor import TempSensor
+from RelaySensor import RelaySensor
+from RelayController import RelayController
 
 from MockTempSensor import MockTempSensor
 
@@ -16,13 +16,13 @@ ERRORSTATE_KEY = "errorstate"
 ERRORMESSAGE_KEY = "errormessage"
 
 sensors = [
-  MockTempSensor(),
-#    TempSensor(),
-#    RelaySensor(),
+#  MockTempSensor(),
+    TempSensor(),
+    RelaySensor(),
 ]
 
 controllers = [
-#    RelayController(),
+    RelayController(),
 ]
 
 def index(request):
@@ -37,8 +37,8 @@ def index(request):
   responseHTML += "<h2>Controllers</h2>\n" 
   responseHTML += "<ul>"
   for index in range(len(controllers)):
-    controllerName = controller.name
-    responseHTML += "<li>Controller %(controllerName): "
+    controllerName = controllers[index].name
+    responseHTML += "<li>Controller %(controllerName)s: " % locals()
     responseHTML += "<a href=\"/switch/%(index)s/0\">OFF</a>" % locals()
     responseHTML += "&nbsp;|&nbsp;"
     responseHTML += "<a href=\"/switch/%(index)s/1\">ON</a>" % locals()
