@@ -8,7 +8,7 @@ class TempSensor:
   
   def read(self):
     bus = smbus.SMBus(0)
-    data = bus.read_i2c_block_data(ADDRESS, 0)
+    data = bus.read_i2c_block_data(self.ADDRESS, 0)
     msb = data[0]
     lsb = data[1]
     

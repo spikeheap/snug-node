@@ -13,8 +13,9 @@ sensors = [
 ]
 
 def read_sensor(request):
-    result = sensors[sensor].read()
-    return Response('Result for %(sensor)s is %(result)s' % request.matchdict)
+    sensor = request.matchdict['sensor']
+    result = sensors[0].read()
+    return Response('Result for %(sensor)s is %(result)s' % {"sensor": sensor, "result": result})
     
 def issue_command(request):
     return Response('Switching %(output)s to %(state)s' % request.matchdict)
