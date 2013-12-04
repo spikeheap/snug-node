@@ -1,6 +1,9 @@
 import json
 from pprint import pprint
 
+from Sensors.MockTempSensor import MockTempSensor
+from Sensors.MockRelaySensor import MockRelaySensor
+
 class Configuration:
     """ A configuration loader for JSON. The configuration is expected to define the node entirely. """
     
@@ -20,8 +23,20 @@ class Configuration:
     def getNodeConfig(self):
         return self.configMap['node']
         
-    def getSensorsConfig(self):
-        return self.configMap['sensors']
+    def getSensors(self):
+        sensors = []
+        for sensor in self.configMap['sensors']:
+            sensorType = sensor.get('type')
+            sensorName = sensor.get('name')
+            sensorLoc = sensor.get('location')
+            sensorDesc = sensor.get('notes')
+           
+            if(sensorType == "MockRelaySensor"):
+                sensors.append( MockRelaySensor(sensorName, sensorDesc, sensorLoc) )
+            elif(sensorType == "MockTempSensor"):
+                sensors.append( MockTempSensor(sensorName, sensorDesc, sensorLoc) )
+                
+        return sensors         
     
     def getControllersConfig(self):
         return self.configMap['controllers']

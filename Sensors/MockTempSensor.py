@@ -1,5 +1,8 @@
 from random import randrange
-class MockTempSensor:
+
+from Sensor import Sensor
+
+class MockTempSensor(Sensor):
   """ A dummy temperature sensor for testing purposes"""
   
   def read(self):

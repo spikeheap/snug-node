@@ -9,38 +9,35 @@ from Configuration import Configuration
 #from RelaySensor import RelaySensor
 #from RelayController import RelayController
 
-from MockTempSensor import MockTempSensor
-from MockRelaySensor import MockRelaySensor
+
+
+####
+# snug-node, a lightweight endpoint in the snug system. 
+# 
+# Transmits sensor readings and accepts commands from a snug-master
+#
+# TODO: offline cron
+# TODO: offline timed periods (e.g. switch state of X for Y seconds)
+####
 
 # FIXME add to environment config rather than hard-coding only
 PORT = 51251
 ERRORSTATE_KEY = "errorstate"
 ERRORMESSAGE_KEY = "errormessage"
 
+
+
+
+#
+# Configure the sensors and controllers from the config
+#
 appConfig = Configuration("conf/devConfig.json")
-
-sensors = []
-for sensor in appConfig.getSensorsConfig():
-    sensorType = sensor.get('type')
-    sensorName = sensor.get('name')
-    sensorLoc = sensor.get('location')
-    sensorDesc = sensor.get('notes')
-    
-    if(sensorType == "MockRelaySensor"):
-        sensors.append( MockRelaySensor(sensorName, sensorDe) )
-    elif(sensorType == "MockTempSensor"):
-        sensors.append( MockTempSensor() )
+sensors = appConfig.getSensors()
+controllers = []
 
 
-#sensors = [
-#  MockTempSensor(),
-#    TempSensor(),
-#    RelaySensor(),
-#]
+            
 
-controllers = [
-#    RelayController(),
-]
 
 def index(request):
   responseHTML = "<h1>Welcome to the snug</h1>\n"
@@ -65,14 +62,20 @@ def index(request):
   return Response(responseHTML)
 
 def read_sensor(request):
-    sensor = request.matchdict['sensor']
+    sensorId = request.matchdict['sensor']
+    sensor = None
     # default empty result
     result = None
+    sensorDescription = None
+    sensorLocation = None   
     errors = []
     
     try:
-      sensor = int(sensor)
-      result = sensors[sensor].read()
+      sensorId = int(sensorId)
+      sensor = sensors[sensorId]
+      result = sensor.read()
+      sensorDescription = sensor.description
+      sensorLocation = sensor.location
     except ValueError:
       errors.append({
           ERRORSTATE_KEY   : 2,
@@ -83,10 +86,12 @@ def read_sensor(request):
         ERRORSTATE_KEY    : 1,
         ERRORMESSAGE_KEY  : "The specified sensor does not exist"
       })
-
     # FIXME add the errors as an array
     return {
-        "sensor": sensor,
+        "self": "http://WHATS-MY-IP:WHATS-MY-PORT/read/%(sensorId)s" % locals(),
+        "sensor": sensorId,
+        "description": sensorDescription,
+        "location": sensorLocation,
         "timestamp": datetime.datetime.now().isoformat(' '),
         "result": result,
         "errors": errors,
