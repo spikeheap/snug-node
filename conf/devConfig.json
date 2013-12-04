@@ -1,0 +1,23 @@
+{
+	"master": {
+		"name": "test",
+		"address": "localhost"
+	},
+	"node": {
+		"name": "DevNode",
+		"description": "A development node using mock sensors"
+	},
+	"sensors": [
+		{
+			"name": "Lounge Temp",
+			"type": "MockTempSensor",
+			"location": "lounge"
+		},
+		{
+			"name": "Kitchen Temp",
+			"type": "MockRelaySensor",
+			"location": "kitchen",
+			"notes": "For a Worcester 24CDi boiler"
+		}
+	]
+}

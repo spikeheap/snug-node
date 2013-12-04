@@ -4,25 +4,42 @@ from pyramid.response import Response
 
 import datetime
 
-from TempSensor import TempSensor
-from RelaySensor import RelaySensor
-from RelayController import RelayController
+from Configuration import Configuration
+#from TempSensor import TempSensor
+#from RelaySensor import RelaySensor
+#from RelayController import RelayController
 
 from MockTempSensor import MockTempSensor
+from MockRelaySensor import MockRelaySensor
 
 # FIXME add to environment config rather than hard-coding only
 PORT = 51251
 ERRORSTATE_KEY = "errorstate"
 ERRORMESSAGE_KEY = "errormessage"
 
-sensors = [
+appConfig = Configuration("conf/devConfig.json")
+
+sensors = []
+for sensor in appConfig.getSensorsConfig():
+    sensorType = sensor.get('type')
+    sensorName = sensor.get('name')
+    sensorLoc = sensor.get('location')
+    sensorDesc = sensor.get('notes')
+    
+    if(sensorType == "MockRelaySensor"):
+        sensors.append( MockRelaySensor(sensorName, sensorDe) )
+    elif(sensorType == "MockTempSensor"):
+        sensors.append( MockTempSensor() )
+
+
+#sensors = [
 #  MockTempSensor(),
-    TempSensor(),
-    RelaySensor(),
-]
+#    TempSensor(),
+#    RelaySensor(),
+#]
 
 controllers = [
-    RelayController(),
+#    RelayController(),
 ]
 
 def index(request):
