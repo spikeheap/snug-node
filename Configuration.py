@@ -13,6 +13,7 @@ class Configuration:
   
   def __init__(self,configFileName=DEFAULT_CONFIG_FILE):
     """ Creates the configuration object and loads the passed file. """
+    # FIXME abstract out the JSON loader
     configFile = open(configFileName, 'r')
     self.configMap = json.loads( configFile.read() )
     configFile.close()
@@ -46,5 +47,6 @@ class Configuration:
     return sensors         
   
   def getControllersConfig(self):
+    # FIXME - fix up like the Sensors config
     return self.configMap['controllers']
       
